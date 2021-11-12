@@ -46,12 +46,12 @@ func NewUsers(fileName string) (Users, error) {
 }
 
 //add a new user to the map and save the map on file
-func (u *Users) AddUser(username, password, pfpPath string) error {
-	if u.ExistUser(username) {
+func (u *Users) AddUser(email, password, pfpPath string) error {
+	if u.ExistUser(email) {
 		return fmt.Errorf("User already exists")
 	}
-	(*u)[username] = Content{password, pfpPath}
-	fmt.Println(username, password)
+	(*u)[email] = Content{password, pfpPath}
+	fmt.Println(email, password)
 	u.PrintAllUsers()
 	err := u.saveOnFile()
 	if err != nil {
@@ -61,11 +61,11 @@ func (u *Users) AddUser(username, password, pfpPath string) error {
 }
 
 //update a user on the map and save the map on file
-func (u *Users) UpdateUser(username, password, pfpPath string) error {
-	if !u.ExistUser(username) {
+func (u *Users) UpdateUser(email, password, pfpPath string) error {
+	if !u.ExistUser(email) {
 		return fmt.Errorf("User does not exist")
 	}
-	(*u)[username] = Content{password, pfpPath}
+	(*u)[email] = Content{password, pfpPath}
 	err := u.saveOnFile()
 	if err != nil {
 		return err
@@ -73,20 +73,20 @@ func (u *Users) UpdateUser(username, password, pfpPath string) error {
 	return nil
 }
 
-//return the Content of the user given the username
-func (u *Users) GetUser(username string) (Content, error) {
-	if !u.ExistUser(username) {
+//return the Content of the user given the email
+func (u *Users) GetUser(email string) (Content, error) {
+	if !u.ExistUser(email) {
 		return Content{}, fmt.Errorf("User does not exist")
 	}
-	return (*u)[username], nil
+	return (*u)[email], nil
 }
 
 //delete a user on the map and the file
-func (u *Users) DeleteUser(username string) error {
-	if !u.ExistUser(username) {
+func (u *Users) DeleteUser(email string) error {
+	if !u.ExistUser(email) {
 		return fmt.Errorf("User does not exist")
 	}
-	delete(*u, username)
+	delete(*u, email)
 	err := u.saveOnFile()
 	if err != nil {
 		return err
@@ -94,9 +94,9 @@ func (u *Users) DeleteUser(username string) error {
 	return nil
 }
 
-//check if a user with given username exists
-func (u *Users) ExistUser(username string) bool {
-	_, ok := (*u)[username]
+//check if a user with given email exists
+func (u *Users) ExistUser(email string) bool {
+	_, ok := (*u)[email]
 	return ok
 }
 
