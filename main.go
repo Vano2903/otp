@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Vano2903/otp/internal/pkg/email"
-	"github.com/Vano2903/otp/internal/pkg/users"
+	"github.com/Vano2903/vano-otp/internal/pkg/email"
+	"github.com/Vano2903/vano-otp/internal/pkg/users"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/segmentio/ksuid"
@@ -143,7 +143,6 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Conferma la registrazione", e)
 	if err != nil {
 		PrintInternalErr(w, err.Error())
@@ -255,7 +254,6 @@ func main() {
 	//statics
 	r.PathPrefix(statics.String()).Handler(http.StripPrefix(statics.String(), http.FileServer(http.Dir("static/"))))
 
-	
 	//root
 	// r.HandleFunc(root.String(), LoginPageHandler).Methods("GET", "OPTIONS")
 
