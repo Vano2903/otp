@@ -1,4 +1,4 @@
-module github.com/Vano2903/otp
+module github.com/Vano2903/vano-otp
 
 // +heroku goVersion go1.17
 go 1.16
