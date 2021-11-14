@@ -143,7 +143,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
+
 	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Conferma la registrazione", e)
 	if err != nil {
 		PrintInternalErr(w, err.Error())
@@ -255,6 +255,7 @@ func main() {
 	//statics
 	r.PathPrefix(statics.String()).Handler(http.StripPrefix(statics.String(), http.FileServer(http.Dir("static/"))))
 
+	
 	//root
 	// r.HandleFunc(root.String(), LoginPageHandler).Methods("GET", "OPTIONS")
 
