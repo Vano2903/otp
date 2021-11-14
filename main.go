@@ -143,6 +143,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	
 	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Conferma la registrazione", e)
 	if err != nil {
 		PrintInternalErr(w, err.Error())
