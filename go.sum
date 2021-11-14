@@ -1,3 +1,5 @@
+github.com/Vano2903/otp v0.0.0-20211114222027-b0eefa01618a h1:GElVy0VCbpKdLlKZtJ+PzWEc7X/gmztSBfTPFxGnKr0=
+github.com/Vano2903/otp v0.0.0-20211114222027-b0eefa01618a/go.mod h1:uB9VEjXqxRzzBF2ox/+tY3yuqZMer4tY7wcK2XM7uLE=
 github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/gorilla/handlers v1.5.1 h1:9lRY6j8DEeeBT10CvO9hGW0gmky0BprnvDI5vfhUHH4=
