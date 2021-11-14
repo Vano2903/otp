@@ -8,13 +8,11 @@ import (
 )
 
 type Content struct {
-	Password string
-	PfpPath  string
+	Password string `json:"password"`
+	PfpUrl   string `json:"pfpUrl"`
 }
 
 type Users map[string]Content
-
-var filePath string
 
 //create a new Users map
 func NewUsers(fileName string) (Users, error) {
@@ -22,11 +20,12 @@ func NewUsers(fileName string) (Users, error) {
 	//if not create a file with the name fileName
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
 		//create file
-		file, err := os.Create("./" + fileName)
+		file, err := os.Create(fileName)
 		if err != nil {
 			return nil, err
 		}
 		defer file.Close()
+		fmt.Println(file.Name())
 	} else {
 		var u Users
 		//read file
@@ -41,19 +40,18 @@ func NewUsers(fileName string) (Users, error) {
 		}
 		return u, nil
 	}
-	filePath = fileName
 	return make(Users), nil
 }
 
 //add a new user to the map and save the map on file
-func (u *Users) AddUser(email, password, pfpPath string) error {
+func (u *Users) AddUser(email, password, path string) error {
 	if u.ExistUser(email) {
 		return fmt.Errorf("User already exists")
 	}
-	(*u)[email] = Content{password, pfpPath}
+	(*u)[email] = Content{password, ""}
 	fmt.Println(email, password)
 	u.PrintAllUsers()
-	err := u.saveOnFile()
+	err := u.saveOnFile(path)
 	if err != nil {
 		return err
 	}
@@ -61,12 +59,16 @@ func (u *Users) AddUser(email, password, pfpPath string) error {
 }
 
 //update a user on the map and save the map on file
-func (u *Users) UpdateUser(email, password, pfpPath string) error {
+func (u *Users) UpdateUser(email, password, newPassword, PfpUrl, path string) error {
 	if !u.ExistUser(email) {
 		return fmt.Errorf("User does not exist")
 	}
-	(*u)[email] = Content{password, pfpPath}
-	err := u.saveOnFile()
+	if (*u)[email].Password != password {
+		return fmt.Errorf("Incorrect password")
+	}
+
+	(*u)[email] = Content{newPassword, PfpUrl}
+	err := u.saveOnFile(path)
 	if err != nil {
 		return err
 	}
@@ -74,20 +76,26 @@ func (u *Users) UpdateUser(email, password, pfpPath string) error {
 }
 
 //return the Content of the user given the email
-func (u *Users) GetUser(email string) (Content, error) {
+func (u *Users) GetUser(email, password string) (Content, error) {
 	if !u.ExistUser(email) {
 		return Content{}, fmt.Errorf("User does not exist")
+	}
+	if (*u)[email].Password != password {
+		return Content{}, fmt.Errorf("Incorrect password")
 	}
 	return (*u)[email], nil
 }
 
 //delete a user on the map and the file
-func (u *Users) DeleteUser(email string) error {
+func (u *Users) DeleteUser(email, password, path string) error {
 	if !u.ExistUser(email) {
 		return fmt.Errorf("User does not exist")
 	}
+	if (*u)[email].Password != password {
+		return fmt.Errorf("Incorrect password")
+	}
 	delete(*u, email)
-	err := u.saveOnFile()
+	err := u.saveOnFile(path)
 	if err != nil {
 		return err
 	}
@@ -101,12 +109,12 @@ func (u *Users) ExistUser(email string) bool {
 }
 
 //save the map on file
-func (u Users) saveOnFile() error {
+func (u Users) saveOnFile(path string) error {
 	jsonByte, err := json.Marshal(&u)
 	if err != nil {
 		return err
 	}
-	file, err := os.Create(filePath)
+	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
