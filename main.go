@@ -149,14 +149,31 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = pendings.AddUser(post.Email, post.Password, c.PendingFilePath)
+	err = pendings.AddUser(post.Email, id.String(), c.PendingFilePath)
 	if err != nil {
 		PrintInternalErr(w, err.Error())
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte(`{"status": 202, "msg": "confirmation email correctly sent"}`))
+}
+
+func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	email := vars["email"]
+	id := vars["id"]
+
+	_, err := pendings.GetUser(email, id)
+	if err != nil {
+		PrintErr(w, err.Error())
+		return
+	}
+
+	pendings.DeleteUser(email, id, c.PendingFilePath)
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"status": 201, "msg": "user registered correctly"}`))
 }
 
 func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
@@ -243,6 +260,9 @@ func main() {
 	//user area
 	r.HandleFunc(usersLogin.String(), LoginHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc(addUser.String(), AddUserHandler).Methods("POST", "OPTIONS")
+
+	//email
+	r.HandleFunc(ConfirmAccount.String(), ConfirmAccountHandler).Methods("GET", "OPTIONS")
 
 	//document section
 	r.HandleFunc(fileupload.String(), UploadFileHandler).Methods("POST", "OPTIONS")
