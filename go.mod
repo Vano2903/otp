@@ -1,6 +1,6 @@
 module github.com/Vano2903/otp
 
-// +heroku goVersion go1.16.1
+// +heroku goVersion go1.17
 go 1.16
 
 require (
