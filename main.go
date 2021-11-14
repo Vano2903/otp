@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Vano2903/otp/internal/pkg/email"
 	"github.com/Vano2903/otp/internal/pkg/users"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -26,9 +27,10 @@ type PostContent struct {
 }
 
 var (
-	c     Config
-	files []File
-	u     users.Users
+	c        Config
+	files    []File
+	u        users.Users
+	pendings users.Users
 )
 
 func init() {
@@ -38,8 +40,14 @@ func init() {
 		log.Fatal(err)
 	}
 
+	//load pending users
+	u, err = users.NewUsers(c.PendingFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	//load users
-	u, err = users.NewUsers("users.json")
+	u, err = users.NewUsers(c.UserFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,15 +81,82 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&post)
 
-	err := u.AddUser(post.Email, post.Password, c.UserFilePath)
+	id := ksuid.New()
+	e := fmt.Sprintf(`<head>
+	<style>
+		div {
+			background-color: #1e1e1e;
+			display: grid;
+			padding: 0 1rem 1rem 1rem;
+			justify-content: center;
+			align-items: center;
+			border-radius: .2rem;
+		}
+		#submit, #submit:visited, #submit:active {
+			margin: 1rem auto;
+			cursor: pointer;
+			font-family: inherit;
+			font-size: 1rem;
+			border-radius: .2rem;
+			padding: 1rem 3rem;
+			transition: .2s;
+			outline: none;
+			height: fit-content;
+			background-color: #ffcc80;
+			border: none;
+			color: #000000;
+			text-decoration: none;
+		}
+	
+		#submit:hover {
+			background-color: #ca9b52;
+		}
+	
+		h1 {
+			margin: 0 auto;
+			color: #ffffff;
+		}
+		p {
+			margin-top: 2rem;
+			width: 100%;
+			color: white;
+		}
+		#delete, #delete:hover, #delete:visited, #delete:active {
+			color: #9c64a6;
+			text-decoration: none;
+		}
+		h2 {
+			width: 100%;
+			color: #ffffff;
+			margin: 0 0 1rem 0;
+		}
+	</style>
+	</head>
+	<div>
+		<h2>Experia</h2>
+		<h1>Ciao, abbiamo quasi fatto, conferma la tua registrazione cliccando qui sotto!</h1>
+		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s;id=%s' id='submit'>Conferma la registrazione</a>
+	</div>`, post.Email, id.String())
 
+	if !email.IsValid(post.Email) {
+		PrintErr(w, "email is not valid")
+		return
+	}
+
+	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Conferma la registrazione", e)
 	if err != nil {
-		PrintErr(w, err.Error())
+		PrintInternalErr(w, err.Error())
+		return
+	}
+
+	err = pendings.AddUser(post.Email, post.Password, c.PendingFilePath)
+	if err != nil {
+		PrintInternalErr(w, err.Error())
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(`{"status": 201, "msg": "user successfully created"}`))
+	w.Write([]byte(`{"status": 202, "msg": "confirmation email correctly sent"}`))
 }
 
 func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
