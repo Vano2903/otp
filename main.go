@@ -41,7 +41,7 @@ func init() {
 	}
 
 	//load pending users
-	u, err = users.NewUsers(c.PendingFilePath)
+	pendings, err = users.NewUsers(c.PendingFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -244,8 +244,6 @@ func DocumentBindHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println("c:", c)
-	fmt.Println("pending:", pendings)
 
 	port := os.Getenv("PORT")
 	if port == "" {
