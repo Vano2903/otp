@@ -77,7 +77,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(fmt.Sprintf(`{"accepted":true, "code": 202, "pfpUrl": %s}`, user.PfpUrl)))
+	w.Write([]byte(fmt.Sprintf(`{"accepted":true, "code": 202, "pfpUrl": %q}`, user.PfpUrl)))
 }
 
 //handler that let user register to the database
