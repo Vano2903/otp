@@ -16,6 +16,7 @@ type Config struct {
 }
 
 func (c *Config) Load() error {
+	fmt.Println("loading config")
 	userFilePath := os.Getenv("user-file-path")
 	pendingFilePath := os.Getenv("pending-file-path")
 	email := os.Getenv("email")
