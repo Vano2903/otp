@@ -61,6 +61,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	//read post body
 	_ = json.NewDecoder(r.Body).Decode(&post)
 	fmt.Println("login post:", post)
+
+	fmt.Println("users:")
+	u.PrintAllUsers()
 	//check if user is correct
 	user, err := u.GetUser(post.Email, post.Password)
 	fmt.Println("login user:", user)
