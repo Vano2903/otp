@@ -133,9 +133,8 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	</style>
 	</head>
 	<div>
-		<h2>Experia</h2>
 		<h1>Ciao, abbiamo quasi fatto, conferma la tua registrazione cliccando qui sotto!</h1>`
-	e := fmt.Sprintf(emailHead+`
+	emailHead += fmt.Sprintf(`
 		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s;id=%s' id='submit'>Conferma la registrazione</a>
 	</div>`, post.Email, id.String())
 
@@ -144,7 +143,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Conferma la registrazione", e)
+	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Conferma la registrazione", emailHead)
 	if err != nil {
 		PrintInternalErr(w, err.Error())
 		return
