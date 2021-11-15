@@ -82,7 +82,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&post)
 
 	id := ksuid.New()
-	e := fmt.Sprintf(`<head>
+	emailHead := `<head>
 	<style>
 		div {
 			background-color: #1e1e1e;
@@ -134,7 +134,8 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	</head>
 	<div>
 		<h2>Experia</h2>
-		<h1>Ciao, abbiamo quasi fatto, conferma la tua registrazione cliccando qui sotto!</h1>
+		<h1>Ciao, abbiamo quasi fatto, conferma la tua registrazione cliccando qui sotto!</h1>`
+	e := fmt.Sprintf(emailHead+`
 		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s;id=%s' id='submit'>Conferma la registrazione</a>
 	</div>`, post.Email, id.String())
 
