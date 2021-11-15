@@ -60,10 +60,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	//read post body
 	_ = json.NewDecoder(r.Body).Decode(&post)
-
+	fmt.Println("login post:", post)
 	//check if user is correct
 	user, err := u.GetUser(post.Email, post.Password)
-
+	fmt.Println("login user:", user)
+	fmt.Println("login error", err)
 	//return response
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
