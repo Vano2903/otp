@@ -1,1 +1,1 @@
-web: vano-otp
+web: bin/vano-otp
