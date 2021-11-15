@@ -160,9 +160,20 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	email := vars["email"]
-	id := vars["id"]
+	r.ParseForm()
+
+	var email, id string
+	for k, v := range r.Form {
+		switch k {
+		case "id":
+			id = v[0]
+		case "email":
+			email = v[0]
+		default:
+			PrintErr(w, "missing id or email parameters")
+			return
+		}
+	}
 
 	_, err := pendings.GetUser(email, id)
 	if err != nil {
