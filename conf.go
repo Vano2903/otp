@@ -29,6 +29,7 @@ func (c *Config) Load() error {
 			return err
 		}
 	} else {
+		c.PendingFilePath = pendingFilePath
 		c.UserFilePath = userFilePath
 		c.Email = email
 		c.EmailPassword = psw
