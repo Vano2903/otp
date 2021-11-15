@@ -86,6 +86,13 @@ func (u *Users) GetUser(email, password string) (Content, error) {
 	return (*u)[email], nil
 }
 
+func (u *Users) GetUserNoPassword(email string) (Content, error) {
+	if !u.ExistUser(email) {
+		return Content{}, fmt.Errorf("User does not exist")
+	}
+	return (*u)[email], nil
+}
+
 //delete a user on the map and the file
 func (u *Users) DeleteUser(email, password, path string) error {
 	if !u.ExistUser(email) {

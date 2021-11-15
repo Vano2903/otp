@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/Vano2903/vano-otp/internal/pkg/email"
 	"github.com/Vano2903/vano-otp/internal/pkg/users"
@@ -77,6 +78,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 //handler that let user register to the database
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	var post PostContent
 
 	_ = json.NewDecoder(r.Body).Decode(&post)
@@ -149,7 +151,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = pendings.AddUser(post.Email, id.String(), c.PendingFilePath)
+	err = pendings.AddUser(post.Email, id.String()+";"+post.Password, c.PendingFilePath)
 	if err != nil {
 		PrintInternalErr(w, err.Error())
 		return
@@ -160,6 +162,8 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	r.ParseForm()
 
 	var email, id string
@@ -175,19 +179,22 @@ func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	_, err := pendings.GetUser(email, id)
+	user, err := pendings.GetUserNoPassword(email)
 	if err != nil {
 		PrintErr(w, err.Error())
 		return
 	}
 
 	pendings.DeleteUser(email, id, c.PendingFilePath)
+	u.AddUser(email, strings.Split(user.Password, ";")[1], c.UserFilePath)
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(`{"status": 201, "msg": "user registered correctly"}`))
 }
 
 func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	r.ParseMultipartForm(10 << 20)
 	file, handler, err := r.FormFile("document")
 
@@ -224,6 +231,8 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DocumentBindHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	kuid := mux.Vars(r)["kuid"]
 	for i, file := range files {
 		if file.ID == kuid {
