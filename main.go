@@ -135,7 +135,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	<div>
 		<h1>Ciao, abbiamo quasi fatto, conferma la tua registrazione cliccando qui sotto!</h1>`
 	emailHead += fmt.Sprintf(`
-		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s;id=%s' id='submit'>Conferma la registrazione</a>
+		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s&id=%s' id='submit'>Conferma la registrazione</a>
 	</div>`, post.Email, id.String())
 
 	if !email.IsValid(post.Email) {
