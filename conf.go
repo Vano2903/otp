@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -20,6 +21,7 @@ func (c *Config) Load() error {
 	email := os.Getenv("email")
 	psw := os.Getenv("email-password")
 	if pendingFilePath == "" || userFilePath == "" || email == "" || psw == "" {
+		fmt.Println("opening config.yaml")
 		dat, err := ioutil.ReadFile("config.yaml")
 		err = yaml.Unmarshal([]byte(dat), &c)
 		if err != nil {
