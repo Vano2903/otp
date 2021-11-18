@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/Vano2903/vano-otp/internal/pkg/email"
+	"github.com/Vano2903/vano-otp/internal/pkg/otp"
 	"github.com/Vano2903/vano-otp/internal/pkg/users"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -28,10 +29,11 @@ type PostContent struct {
 }
 
 var (
-	c        Config
-	files    []File
-	u        users.Users
-	pendings users.Users
+	c          Config
+	files      []File
+	u          users.Users
+	pendings   users.Users
+	otpHandler otp.OtpHandler
 )
 
 func init() {
@@ -52,6 +54,8 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	otpHandler = otp.NewOtpHandler()
 }
 
 //handler of the login (post), check if the user sent is a valid user and if it is will return the correct user page
@@ -60,14 +64,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	//read post body
 	_ = json.NewDecoder(r.Body).Decode(&post)
-	fmt.Println("login post:", post)
 
-	fmt.Println("users:")
-	u.PrintAllUsers()
 	//check if user is correct
 	user, err := u.GetUser(post.Email, post.Password)
-	fmt.Println("login user:", user)
-	fmt.Println("login error", err)
+
 	//return response
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
