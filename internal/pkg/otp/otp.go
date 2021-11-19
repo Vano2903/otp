@@ -53,6 +53,7 @@ func (h OtpHandler) PrintAllOtps() {
 }
 
 func generateSecret() string {
+	rand.Seed(time.Now().UnixNano())
 	//generate a random number from 100000 to 999999
 	return fmt.Sprintf("%06d", rand.Intn(899999)+100000)
 }
@@ -113,7 +114,11 @@ func (o Otp) validate(code string) bool {
 }
 
 func (o Otp) isStillValid() bool {
-	return o.Duration > 0
+	//difference between now time and creation time
+	diff := time.Since(o.Creation)
+	//if difference is less than the duration of the otp
+	//the otp is still valid
+	return diff.Seconds() < float64(o.Duration)
 }
 
 //save the map on file

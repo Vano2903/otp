@@ -106,7 +106,7 @@ func OtpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("before check otp")
+	fmt.Println("before check otp")
 	otpHandler.PrintAllOtps()
 
 	//check if the otp is correct
