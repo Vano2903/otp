@@ -72,7 +72,7 @@ func (h OtpHandler) CreateNew(user, filename string) string {
 }
 
 func (h OtpHandler) CheckOtp(user, secret, filename string) error {
-	otp, err := h.get(user)
+	otp, err := h.get(user, filename)
 	if err != nil {
 		return err
 	}
