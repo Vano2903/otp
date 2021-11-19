@@ -46,6 +46,12 @@ func NewOtpHandler(fileName string) (OtpHandler, error) {
 	return handler, nil
 }
 
+func (h OtpHandler) PrintAllOtps() {
+	for _, otp := range h {
+		fmt.Println(otp)
+	}
+}
+
 func generateSecret() string {
 	//generate a random number from 100000 to 999999
 	return fmt.Sprintf("%06d", rand.Intn(899999)+100000)
