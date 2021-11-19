@@ -83,6 +83,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("otp in login handler:")
 	otpHandler.PrintAllOtps()
 
 	//return response

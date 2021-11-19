@@ -100,13 +100,22 @@ func (h *OtpHandler) remove(otp Otp, filename string) {
 	}
 }
 
-func (h OtpHandler) get(user string) (Otp, error) {
+func (h OtpHandler) get(user, filename string) (Otp, error) {
+	file, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return Otp{}, err
+	}
+	err = json.Unmarshal(file, &h)
+	if err != nil {
+		return Otp{}, err
+	}
+
 	for _, otp := range h {
 		if otp.User == user {
 			return otp, nil
 		}
 	}
-	return Otp{}, fmt.Errorf("user doesnt have and otp active")
+	return Otp{}, fmt.Errorf("user doesn't have an otp active")
 }
 
 func (o Otp) validate(code string) bool {
