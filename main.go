@@ -55,7 +55,10 @@ func init() {
 		log.Fatal(err)
 	}
 
-	otpHandler = otp.NewOtpHandler()
+	otpHandler, err = otp.NewOtpHandler(c.OtpFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 //handler of the login (post), check if the user sent is a valid user and if it is will return the correct user page
@@ -72,7 +75,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	otpSecret := otpHandler.CreateNew(post.Email)
+	otpSecret := otpHandler.CreateNew(post.Email, c.OtpFilePath)
 
 	err = email.SendEmail(c.Email, c.EmailPassword, post.Email, "Codice di conferma", fmt.Sprintf("Il codice di conferma é <br><br> <b>%s</b>", otpSecret))
 	if err != nil {
@@ -102,7 +105,7 @@ func OtpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//check if the otp is correct
-	err = otpHandler.CheckOtp(post.Email, otpSecret)
+	err = otpHandler.CheckOtp(post.Email, otpSecret, c.OtpFilePath)
 
 	//if the otp is incorrect return 400
 	if err != nil {

@@ -1,8 +1,11 @@
 package otp
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -15,8 +18,32 @@ type Otp struct {
 
 type OtpHandler []Otp
 
-func NewOtpHandler() OtpHandler {
-	return make(OtpHandler, 0)
+func NewOtpHandler(fileName string) (OtpHandler, error) {
+	handler := make(OtpHandler, 0)
+
+	//check if fileName exists
+	//if not create a file with the name fileName
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		//create file
+		file, err := os.Create(fileName)
+		if err != nil {
+			return nil, err
+		}
+		defer file.Close()
+		file.WriteString("{}")
+	}
+
+	//read file
+	file, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+	//create map
+	err = json.Unmarshal(file, &handler)
+	if err != nil {
+		return nil, err
+	}
+	return handler, nil
 }
 
 func generateSecret() string {
@@ -24,7 +51,7 @@ func generateSecret() string {
 	return fmt.Sprintf("%06d", rand.Intn(899999)+100000)
 }
 
-func (h OtpHandler) CreateNew(user string) string {
+func (h OtpHandler) CreateNew(user, filename string) string {
 	secret := generateSecret()
 	otp := Otp{
 		Secret:   secret,
@@ -33,10 +60,11 @@ func (h OtpHandler) CreateNew(user string) string {
 		User:     user,
 	}
 	h = append(h, otp)
+	h.saveOnFile(filename)
 	return secret
 }
 
-func (h OtpHandler) CheckOtp(user, secret string) error {
+func (h OtpHandler) CheckOtp(user, secret, filename string) error {
 	otp, err := h.get(user)
 	if err != nil {
 		return err
@@ -50,15 +78,16 @@ func (h OtpHandler) CheckOtp(user, secret string) error {
 		return fmt.Errorf("otp expired")
 	}
 
-	h.remove(otp)
+	h.remove(otp, filename)
 
 	return nil
 }
 
-func (h *OtpHandler) remove(otp Otp) {
+func (h *OtpHandler) remove(otp Otp, filename string) {
 	for i, o := range *h {
 		if o.Secret == otp.Secret {
 			*h = append((*h)[:i], (*h)[i+1:]...)
+			h.saveOnFile(filename)
 			return
 		}
 	}
@@ -79,4 +108,22 @@ func (o Otp) validate(code string) bool {
 
 func (o Otp) isStillValid() bool {
 	return o.Duration > 0
+}
+
+//save the map on file
+func (h OtpHandler) saveOnFile(path string) error {
+	jsonByte, err := json.Marshal(&h)
+	if err != nil {
+		return err
+	}
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	_, err = file.Write(jsonByte)
+	if err != nil {
+		return err
+	}
+	return nil
 }

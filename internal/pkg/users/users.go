@@ -25,7 +25,7 @@ func NewUsers(fileName string) (Users, error) {
 			return nil, err
 		}
 		defer file.Close()
-		fmt.Println(file.Name())
+		file.WriteString("{}")
 	} else {
 		var u Users
 		//read file
@@ -49,8 +49,7 @@ func (u *Users) AddUser(email, password, path string) error {
 		return fmt.Errorf("User already exists")
 	}
 	(*u)[email] = Content{password, ""}
-	fmt.Println(email, password)
-	u.PrintAllUsers()
+
 	err := u.saveOnFile(path)
 	if err != nil {
 		return err
