@@ -83,9 +83,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("otp in login handler:")
-	otpHandler.PrintAllOtps()
-
 	//return response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
@@ -107,9 +104,6 @@ func OtpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("before check otp")
-	otpHandler.PrintAllOtps()
-
 	//check if the otp is correct
 	err = otpHandler.CheckOtp(post.Email, otpSecret, c.OtpFilePath)
 
@@ -118,9 +112,6 @@ func OtpHandler(w http.ResponseWriter, r *http.Request) {
 		PrintErr(w, err.Error())
 		return
 	}
-
-	fmt.Printf("after check otp")
-	otpHandler.PrintAllOtps()
 
 	//TODO respond the user page
 	w.Header().Set("Content-Type", "application/json")
@@ -343,6 +334,7 @@ func main() {
 	r.HandleFunc(fileupload.String(), UploadFileHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc(fileBind.String(), DocumentBindHandler).Methods("POST", "OPTIONS")
 
+	//api mode
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "POST"})
