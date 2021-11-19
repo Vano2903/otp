@@ -30,7 +30,7 @@ func NewOtpHandler(fileName string) (OtpHandler, error) {
 			return nil, err
 		}
 		defer file.Close()
-		file.WriteString("{}")
+		file.WriteString("[]")
 	}
 
 	//read file
