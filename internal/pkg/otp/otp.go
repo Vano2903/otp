@@ -36,23 +36,23 @@ func (h OtpHandler) CreateNew(user string) string {
 	return secret
 }
 
-func (h OtpHandler) CheckOtp(user, secret string) (bool, error) {
+func (h OtpHandler) CheckOtp(user, secret string) error {
 	otp, err := h.get(user)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if !otp.validate(secret) {
-		return false, fmt.Errorf("wrong secret")
+		return fmt.Errorf("wrong secret")
 	}
 
 	if !otp.isStillValid() {
-		return false, fmt.Errorf("otp expired")
+		return fmt.Errorf("otp expired")
 	}
 
 	h.remove(otp)
 
-	return true, nil
+	return nil
 }
 
 func (h *OtpHandler) remove(otp Otp) {

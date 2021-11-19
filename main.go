@@ -66,18 +66,54 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&post)
 
 	//check if user is correct
-	user, err := u.GetUser(post.Email, post.Password)
-
-	//return response
-	w.Header().Set("Content-Type", "application/json")
+	_, err := u.GetUser(post.Email, post.Password)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(fmt.Sprintf(`{"accepted":false, "code": 401, "msg": %q}`, err.Error())))
+		PrintErr(w, err.Error())
 		return
 	}
 
+	otpSecret := otpHandler.CreateNew(post.Email)
+
+	err = email.SendEmail(c.Email, c.EmailPassword, post.Email, "Codice di conferma", fmt.Sprintf("Il codice di conferma é <br><br> <b>%s</b>", otpSecret))
+	if err != nil {
+		PrintInternalErr(w, err.Error())
+		return
+	}
+
+	//return response
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(fmt.Sprintf(`{"accepted":true, "code": 202, "pfpUrl": %q}`, user.PfpUrl)))
+	w.Write([]byte(`{"sent":true, "code": 200}`))
+}
+
+//handle the otp request, get as post the users credentials and the otp code as endpoint
+func OtpHandler(w http.ResponseWriter, r *http.Request) {
+	otpSecret := mux.Vars(r)["otp"]
+	var post PostContent
+
+	//read post body
+	_ = json.NewDecoder(r.Body).Decode(&post)
+
+	//check if user is correct
+	_, err := u.GetUser(post.Email, post.Password)
+	if err != nil {
+		PrintErr(w, err.Error())
+		return
+	}
+
+	//check if the otp is correct
+	err = otpHandler.CheckOtp(post.Email, otpSecret)
+
+	//if the otp is incorrect return 400
+	if err != nil {
+		PrintErr(w, err.Error())
+		return
+	}
+
+	//TODO respond the user page
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte(`{"status": 200, "msg": "user logged in correctly"}`))
 }
 
 //handler that let user register to the database
@@ -268,7 +304,6 @@ func DocumentBindHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -288,6 +323,9 @@ func main() {
 
 	//email
 	r.HandleFunc(ConfirmAccount.String(), ConfirmAccountHandler).Methods("GET", "OPTIONS")
+
+	//otp
+	r.HandleFunc(otpConfirmation.String(), OtpHandler).Methods("POST", "OPTIONS")
 
 	//document section
 	r.HandleFunc(fileupload.String(), UploadFileHandler).Methods("POST", "OPTIONS")

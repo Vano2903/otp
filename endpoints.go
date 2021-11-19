@@ -19,6 +19,9 @@ const (
 	//*document and upload endpoints
 	fileupload endpoints = "/upload/file"
 	fileBind   endpoints = "/upload/bind/{kuid}"
+
+	//*otp endpoint
+	otpConfirmation endpoints = "/otp/check/{otp}"
 )
 
 //convert endpoint to string
