@@ -78,15 +78,16 @@ func (h OtpHandler) CheckOtp(user, secret, filename string) error {
 	}
 
 	if !otp.validate(secret) {
+		h.remove(otp, filename)
 		return fmt.Errorf("wrong secret")
 	}
 
 	if !otp.isStillValid() {
+		h.remove(otp, filename)
 		return fmt.Errorf("otp expired")
 	}
 
 	h.remove(otp, filename)
-
 	return nil
 }
 

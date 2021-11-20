@@ -61,6 +61,33 @@ func init() {
 	}
 }
 
+func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
+	home, err := os.ReadFile("pages/login.html")
+	if err != nil {
+		UnavailablePage(w)
+		return
+	}
+	w.Write(home)
+}
+
+func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
+	home, err := os.ReadFile("pages/register.html")
+	if err != nil {
+		UnavailablePage(w)
+		return
+	}
+	w.Write(home)
+}
+
+func OtpPageHandler(w http.ResponseWriter, r *http.Request) {
+	home, err := os.ReadFile("pages/otp.html")
+	if err != nil {
+		UnavailablePage(w)
+		return
+	}
+	w.Write(home)
+}
+
 //handler of the login (post), check if the user sent is a valid user and if it is will return the correct user page
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var post PostContent
@@ -317,8 +344,10 @@ func main() {
 	//statics
 	r.PathPrefix(statics.String()).Handler(http.StripPrefix(statics.String(), http.FileServer(http.Dir("static/"))))
 
-	//root
-	// r.HandleFunc(root.String(), LoginPageHandler).Methods("GET", "OPTIONS")
+	//pages handlers
+	r.HandleFunc(loginPage.String(), LoginPageHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc(registerPage.String(), RegisterPageHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc(otpPage.String(), OtpPageHandler).Methods("GET", "OPTIONS")
 
 	//user area
 	r.HandleFunc(usersLogin.String(), LoginHandler).Methods("POST", "OPTIONS")

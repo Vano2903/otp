@@ -8,6 +8,11 @@ const (
 	//*statics
 	statics endpoints = "/static/" //endpoint for the statics document (js, css, html, images)
 
+	//*pages
+	loginPage    endpoints = "/login"
+	registerPage endpoints = "/register"
+	otpPage      endpoints = "/otp"
+
 	//*users endpoints
 	usersLogin endpoints = "/users/login"  //endpoint to check the login informations
 	checkEmail endpoints = "/users/check"  //check if a email is already registered
