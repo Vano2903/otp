@@ -3,9 +3,11 @@ let user = JSON.parse(localStorage.getItem('credentials'));
 function loadPage() {
     document.getElementById("user-welcome").value = user.email;
     document.getElementById("pfp").src = user.pfpUrl;
-
 }
 
+function showPfpUpdateForm() {
+    document.getElementById("updatePfpForm").style.display = "block";
+}
 
 async function uploadFile() {
     const formData = new FormData();
