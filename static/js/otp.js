@@ -50,7 +50,7 @@ async function sendOtp() {
         error.innerHTML = respJson.msg;
         error.style.display = "block";
     } else {
-        errore.style.display = "none";
+        error.style.display = "none";
         document.write(result);
         document.close();
     }
