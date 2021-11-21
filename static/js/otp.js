@@ -30,7 +30,7 @@ function getOtp() {
         document.getElementById("digit-4").value + document.getElementById("digit-5").value + document.getElementById("digit-6").value;
 }
 
-async function SendOtp() {
+async function sendOtp() {
     let credentials = localStorage.getItem('credentials');
     let otp = getOtp();
 
@@ -43,7 +43,7 @@ async function SendOtp() {
     });
 
     let result = await response.text();
-    let contentType = res.headers.get("Content-Type");
+    let contentType = response.headers.get("Content-Type");
 
     if (!contentType.includes("text/html")) {
         const respJson = JSON.parse(result);
