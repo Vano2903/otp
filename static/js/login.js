@@ -58,6 +58,7 @@ async function login() {
     if (result.code == 200) {
         error.style.display = "none";
         error.innerHTML = "";
+        localStorage.setItem("credentials", JSON.stringify(data));
         window.location.href = "/otp";
         return
     }

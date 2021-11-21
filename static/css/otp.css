@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css?family=Raleway:200");
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body,
+html {
+  height: 100%;
+  margin: 0;
+  font-family: "Raleway", sans-serif;
+  font-weight: 200;
+}
+
+body {
+  background-color: #f6f6fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+input {
+  width: 30px;
+  height: 50px;
+  background-color: #c0c0ca;
+  border: none;
+  line-height: 50px;
+  text-align: center;
+  font-size: 24px;
+  font-family: "Raleway", sans-serif;
+  font-weight: 200;
+  color: black;
+  margin: 0 2px;
+}
+
+.splitter {
+  padding: 0 5px;
+  color: black;
+  font-size: 24px;
+}
+
+.prompt {
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: black;
+}

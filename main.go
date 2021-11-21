@@ -143,7 +143,7 @@ func OtpHandler(w http.ResponseWriter, r *http.Request) {
 	//TODO respond the user page
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(`{"status": 200, "msg": "user logged in correctly"}`))
+	w.Write([]byte(`{"code": 200, "msg": "user logged in correctly"}`))
 }
 
 //handler that let user register to the database
