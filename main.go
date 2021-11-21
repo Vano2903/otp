@@ -104,7 +104,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	otpSecret := otpHandler.CreateNew(post.Email, c.OtpFilePath)
 
-	err = email.SendEmail(c.Email, c.EmailPassword, post.Email, "Codice di conferma", fmt.Sprintf("Il codice di conferma é <br><br> <b>%s</b>", otpSecret))
+	err = email.SendEmail(c.Email, c.EmailPassword, post.Email, "Confirmation Code", fmt.Sprintf("Confirmation code is: <br><br> <b>%s</b>", otpSecret))
 	if err != nil {
 		PrintInternalErr(w, err.Error())
 		return
@@ -205,9 +205,9 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	</style>
 	</head>
 	<div>
-		<h1>Ciao, abbiamo quasi fatto, conferma la tua registrazione cliccando qui sotto!</h1>`
+		<h1>Hi, we are almost done, confirma your registration clicking the button below</h1>`
 	emailHead += fmt.Sprintf(`
-		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s&id=%s' id='submit'>Conferma la registrazione</a>
+		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s&id=%s' id='submit'>Confirm your registration</a>
 	</div>`, post.Email, id.String())
 
 	if !email.IsValid(post.Email) {
@@ -215,7 +215,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Conferma la registrazione", emailHead)
+	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Confirm your registration", emailHead)
 	if err != nil {
 		PrintInternalErr(w, err.Error())
 		return
@@ -328,7 +328,6 @@ func DocumentBindHandler(w http.ResponseWriter, r *http.Request) {
 			files = append(files[:i], files[i+1:]...)
 			w.WriteHeader(http.StatusAccepted)
 			w.Write([]byte(`{"status": 202, "msg": "document added successfully"}`))
-			log.Println("file uploaded successfully")
 			return
 		}
 	}
