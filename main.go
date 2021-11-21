@@ -223,12 +223,12 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = pendings.AddUser(post.Email, id.String()+";"+post.Password, c.PendingFilePath)
 	if err != nil {
-		PrintInternalErr(w, err.Error())
+		PrintErr(w, err.Error())
 		return
 	}
 
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(`{"status": 202, "msg": "confirmation email correctly sent"}`))
+	w.Write([]byte(`{"code": 202, "msg": "confirmation email correctly sent"}`))
 }
 
 func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
@@ -248,6 +248,8 @@ func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	fmt.Println("form:", r.Form)
 
 	user, err := pendings.GetUserNoPassword(email)
 	if err != nil {
