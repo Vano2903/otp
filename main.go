@@ -163,8 +163,10 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&post)
 
-	id := ksuid.New()
-	emailHead := `<head>
+	if !u.ExistUser(post.Email) {
+
+		id := ksuid.New()
+		emailHead := `<head>
 	<style>
 		div {
 			background-color: #1e1e1e;
@@ -216,29 +218,32 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	</head>
 	<div>
 		<h1>Hi, we are almost done, confirma your registration clicking the button below</h1>`
-	emailHead += fmt.Sprintf(`
+		emailHead += fmt.Sprintf(`
 		<a href='https://vano-otp.herokuapp.com/auth/confirm?email=%s&id=%s' id='submit'>Confirm your registration</a>
 	</div>`, post.Email, id.String())
 
-	if !email.IsValid(post.Email) {
-		PrintErr(w, "email is not valid")
+		if !email.IsValid(post.Email) {
+			PrintErr(w, "email is not valid")
+			return
+		}
+
+		err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Confirm your registration", emailHead)
+		if err != nil {
+			PrintInternalErr(w, err.Error())
+			return
+		}
+
+		err = pendings.AddUser(post.Email, id.String()+";"+post.Password, c.PendingFilePath)
+		if err != nil {
+			PrintErr(w, err.Error())
+			return
+		}
+
+		w.WriteHeader(http.StatusAccepted)
+		w.Write([]byte(`{"code": 202, "msg": "confirmation email correctly sent"}`))
 		return
 	}
-
-	err := email.SendEmail(c.Email, c.EmailPassword, post.Email, "Confirm your registration", emailHead)
-	if err != nil {
-		PrintInternalErr(w, err.Error())
-		return
-	}
-
-	err = pendings.AddUser(post.Email, id.String()+";"+post.Password, c.PendingFilePath)
-	if err != nil {
-		PrintErr(w, err.Error())
-		return
-	}
-
-	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(`{"code": 202, "msg": "confirmation email correctly sent"}`))
+	PrintErr(w, "user already exist")
 }
 
 func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
