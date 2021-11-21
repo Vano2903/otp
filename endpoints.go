@@ -17,6 +17,7 @@ const (
 	usersLogin endpoints = "/users/login"  //endpoint to check the login informations
 	checkEmail endpoints = "/users/check"  //check if a email is already registered
 	addUser    endpoints = "/users/singup" //as get will return the signup page, as post will read the user's info and if valid add the user to the db
+	updateUser endpoints = "/users/update"
 
 	//*email
 	ConfirmAccount endpoints = "/auth/confirm"

@@ -88,6 +88,15 @@ func OtpPageHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(home)
 }
 
+func HomePageHandler(w http.ResponseWriter, r *http.Request) {
+	home, err := os.ReadFile("pages/home.html")
+	if err != nil {
+		UnavailablePage(w)
+		return
+	}
+	w.Write(home)
+}
+
 //handler of the login (post), check if the user sent is a valid user and if it is will return the correct user page
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var post PostContent
@@ -141,9 +150,10 @@ func OtpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO respond the user page
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(`{"code": 200, "msg": "user logged in correctly"}`))
+	// w.Write([]byte(`{"code": 200, "msg": "user logged in correctly"}`))
+
 }
 
 //handler that let user register to the database
@@ -327,7 +337,7 @@ func DocumentBindHandler(w http.ResponseWriter, r *http.Request) {
 
 			files = append(files[:i], files[i+1:]...)
 			w.WriteHeader(http.StatusAccepted)
-			w.Write([]byte(`{"status": 202, "msg": "document added successfully"}`))
+			w.Write([]byte(fmt.Sprintf(`{"code": 202, "msg": "document added successfully", "pfpUrl":"%s"}`, file.Url)))
 			return
 		}
 	}

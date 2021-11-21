@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>OTP - home</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+
+
+    <div style="padding: 20px;" id="user">
+        <h1 id="user-welcome">Benvenuto </h1><br>
+        <img id="pfp" src="" alt="user-image" class="rounded d-block" width="30%"><br><br>
+
+        <!-- <form style="display: none" id="updatePasswordForm" class="col-6">
+            <div class="mb-3">
+                <label for="currentPassword" class="form-label">Password corrente</label>
+                <input type="password" class="form-control" id="currentPassword">
+                <a class="text-danger" id="errCurrentPass"></a>
+                <label for="newPassword" class="form-label">Nuova password</label>
+                <input type="password" class="form-control" id="newPassword">
+                <a class="text-danger" id="errNewPass"></a>
+                <label for="confirmNewPassword" class="form-label">Conferma la password</label>
+                <input type="password" class="form-control" id="confirmNewPassword">
+                <a class="text-danger" id="errConfirmPass"></a>
+            </div>
+            <input type="button" onclick="updatePassword()" class="btn btn-primary" value="update">
+        </form> -->
+
+        <form style="display: none" id="updatePfpForm" class="col-6">
+            <div class="mb-3">
+                <label for="newPfpUrl" accept="image/*" class=" form-label">New Profile Picture File</label>
+                <input type="file" class="form-control" id="newPfpUrl">
+            </div>
+            <p style="display:none;" id="error" class="alert alert-danger" role="alert"></p>
+            <input type="button" onclick="uploadInfo()" class="btn btn-primary" value="update">
+        </form>
+
+        <br>
+        <input type="button" class="btn btn-primary" onclick="showPfpUpdateForm()" id="pfpUpdate"
+            value="Change Your Profile Picture">
+
+        <!-- <input type="button" class="btn btn-primary" onclick="showPasswordUpdateForm()" id="pswUpdate"
+            value="cambia la tua password"> -->
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
