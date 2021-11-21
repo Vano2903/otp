@@ -167,7 +167,7 @@ func GetUserPfP(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(fmt.Sprintf(`{"code":200, "url":%s}`, u.PfpUrl)))
+	w.Write([]byte(fmt.Sprintf(`{"code":200, "url":"%s"}`, u.PfpUrl)))
 }
 
 //handler that let user register to the database
