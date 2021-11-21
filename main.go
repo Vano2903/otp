@@ -156,6 +156,20 @@ func OtpHandler(w http.ResponseWriter, r *http.Request) {
 	HomePageHandler(w, r)
 }
 
+func GetUserPfP(w http.ResponseWriter, r *http.Request) {
+	email := mux.Vars(r)["email"]
+
+	//check if user is correct
+	u, err := u.GetUserNoPassword(email)
+	if err != nil {
+		PrintErr(w, err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(fmt.Sprintf(`{"code":200, "url":%s}`, u.PfpUrl)))
+}
+
 //handler that let user register to the database
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -368,6 +382,7 @@ func main() {
 	//user area
 	r.HandleFunc(usersLogin.String(), LoginHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc(addUser.String(), AddUserHandler).Methods("POST", "OPTIONS")
+	r.HandleFunc(getUserPfP.String(), GetUserPfP).Methods("GET", "OPTIONS")
 
 	//email
 	r.HandleFunc(ConfirmAccount.String(), ConfirmAccountHandler).Methods("GET", "OPTIONS")

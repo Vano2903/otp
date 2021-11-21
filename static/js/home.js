@@ -1,8 +1,17 @@
 let user = JSON.parse(localStorage.getItem('credentials'));
 
-function loadPage() {
-    document.getElementById("user-welcome").value = user.email;
-    document.getElementById("pfp").src = user.pfpUrl;
+async function loadPage() {
+    document.getElementById("user-welcome").value += user.email;
+
+    let response = await fetch("/users/pfp/" + user.email, {
+        method: 'GET',
+    });
+    let resp = await response.json();
+    if (resp.code == 200) {
+        document.getElementById("pfp").src = resp.pfpUrl;
+    } else {
+        log.Error("Error fetching: " + resp.msg)
+    }
 }
 
 function showPfpUpdateForm() {
