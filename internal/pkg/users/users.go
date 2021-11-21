@@ -108,6 +108,18 @@ func (u *Users) DeleteUser(email, password, path string) error {
 	return nil
 }
 
+func (u *Users) DeleteUserNoPassword(email, path string) error {
+	if !u.ExistUser(email) {
+		return fmt.Errorf("User does not exist")
+	}
+	delete(*u, email)
+	err := u.saveOnFile(path)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //check if a user with given email exists
 func (u *Users) ExistUser(email string) bool {
 	_, ok := (*u)[email]

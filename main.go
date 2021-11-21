@@ -26,6 +26,7 @@ type File struct {
 type PostContent struct {
 	Email    string `json:"email, omitempty"`
 	Password string `json:"password, omitempty"`
+	ID       string `json:"id, omitempty"`
 }
 
 var (
@@ -257,8 +258,7 @@ func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	fmt.Println("form:", r.Form)
+	fmt.Println(id)
 
 	user, err := pendings.GetUserNoPassword(email)
 	if err != nil {
@@ -266,7 +266,8 @@ func ConfirmAccountHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pendings.DeleteUser(email, id, c.PendingFilePath)
+	err = pendings.DeleteUserNoPassword(email, c.PendingFilePath)
+	fmt.Println("deleting pending user:", err)
 	u.AddUser(email, strings.Split(user.Password, ";")[1], c.UserFilePath)
 
 	w.WriteHeader(http.StatusCreated)
@@ -313,7 +314,7 @@ func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 
 func DocumentBindHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
+	fmt.Println(files)
 	kuid := mux.Vars(r)["kuid"]
 	for i, file := range files {
 		if file.ID == kuid {
@@ -326,9 +327,7 @@ func DocumentBindHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			fmt.Println(file)
 			err = u.UpdateUser(postData.Email, postData.Password, postData.Password, file.Url, c.UserFilePath)
-			fmt.Println(u)
 			if err != nil {
 				PrintInternalErr(w, err.Error())
 				return
@@ -353,6 +352,8 @@ func main() {
 
 	//statics
 	r.PathPrefix(statics.String()).Handler(http.StripPrefix(statics.String(), http.FileServer(http.Dir("static/"))))
+
+	r.HandleFunc("/", HomePageHandler).Methods("GET")
 
 	//pages handlers
 	r.HandleFunc(loginPage.String(), LoginPageHandler).Methods("GET", "OPTIONS")

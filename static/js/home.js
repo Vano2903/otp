@@ -6,7 +6,11 @@ function loadPage() {
 }
 
 function showPfpUpdateForm() {
-    document.getElementById("updatePfpForm").style.display = "block";
+    if (document.getElementById("updatePfpForm").style.display == "none") {
+        document.getElementById("updatePfpForm").style.display = "block";
+    } else {
+        document.getElementById("updatePfpForm").style.display = "none";
+    }
 }
 
 async function uploadFile() {
@@ -28,15 +32,13 @@ async function uploadInfo() {
     let fileData = await uploadFile()
     console.log(fileData)
     let body = {
-        user: user,
-        documentInfo: {
-            id: fileData.id,
-            title: fileData.name,
-        }
+        email: user.email,
+        password: user.password,
+        id: fileData.id,
     }
     console.log(body)
 
-    const response = await fetch("/upload/info/" + fileData.id, {
+    const response = await fetch("/upload/bind/" + fileData.id, {
         method: 'POST',
         body: JSON.stringify(body)
     });
